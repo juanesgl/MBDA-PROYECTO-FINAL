@@ -103,7 +103,7 @@ ON DELETE CASCADE;
 --DisparadoresOK--
 /*EntidadGubernamental*/
 /* Trigger para asignar fecha de publicación y generar ID único al insertar */
-CREATE OR REPLACE TRIGGER TRG_ley_insert
+CREATE OR REPLACE TRIGGER TR_ley_insert
 BEFORE INSERT ON leyes
 FOR EACH ROW
 DECLARE
@@ -123,7 +123,7 @@ END;
 /
 
 /* Trigger para actualizar la fecha de última modificación al modificar */
-CREATE OR REPLACE TRIGGER TRG_ley_update
+CREATE OR REPLACE TRIGGER TR_ley_update
 BEFORE UPDATE ON leyes
 FOR EACH ROW
 BEGIN
@@ -138,7 +138,7 @@ END;
 /
 
 /* Trigger para asignar fecha de creación y generar ID único al insertar un Contenido Visual */
-CREATE OR REPLACE TRIGGER TRG_contenido_visual_insert
+CREATE OR REPLACE TRIGGER TR_contenido_visual_insert
 BEFORE INSERT ON contenidosVisuales
 FOR EACH ROW
 BEGIN
@@ -148,7 +148,7 @@ END;
 /
 
 /* Trigger para prevenir la modificación del ID al modificar un Contenido Visual */
-CREATE OR REPLACE TRIGGER TRG_contenido_visual_update
+CREATE OR REPLACE TRIGGER TR_contenido_visual_update
 BEFORE UPDATE ON contenidosVisuales
 FOR EACH ROW
 BEGIN
@@ -160,7 +160,7 @@ END;
 /
 
 -- Trigger para registrar la creación de un Responsable Legal
-CREATE OR REPLACE TRIGGER TRG_responsable_legal_insert
+CREATE OR REPLACE TRIGGER TR_responsable_legal_insert
 BEFORE INSERT ON responsablesLegales
 FOR EACH ROW
 BEGIN
@@ -170,7 +170,7 @@ END;
 /
 
 -- Trigger para registrar la modificación de un Responsable Legal
-CREATE OR REPLACE TRIGGER TRG_responsable_legal_update
+CREATE OR REPLACE TRIGGER TR_responsable_legal_update
 BEFORE UPDATE ON responsablesLegales
 FOR EACH ROW
 BEGIN
@@ -182,7 +182,7 @@ END;
 /*Administrador*/
 
 /* Trigger para asignar fecha de creación al insertar una Clasificación */
-CREATE OR REPLACE TRIGGER TRG_clasificacion_insert
+CREATE OR REPLACE TRIGGER TR_clasificacion_insert
 BEFORE INSERT ON clasificaciones
 FOR EACH ROW
 BEGIN
@@ -192,7 +192,7 @@ END;
 /
 
 /* Trigger para prevenir la modificación del ID al modificar una Clasificación */
-CREATE OR REPLACE TRIGGER TRG_clasificacion_update
+CREATE OR REPLACE TRIGGER TR_clasificacion_update
 BEFORE UPDATE ON clasificaciones
 FOR EACH ROW
 BEGIN
@@ -204,7 +204,7 @@ END;
 /
 
 /* Trigger para asignar fecha de creación al insertar un Perfil */
-CREATE OR REPLACE TRIGGER TRG_perfil_insert
+CREATE OR REPLACE TRIGGER TR_perfil_insert
 BEFORE INSERT ON perfiles
 FOR EACH ROW
 BEGIN
@@ -214,7 +214,7 @@ END;
 /
 
 /* Trigger para actualizar la fecha de última modificación al modificar un Perfil */
-CREATE OR REPLACE TRIGGER TRG_perfil_update
+CREATE OR REPLACE TRIGGER TR_perfil_update
 BEFORE UPDATE ON perfiles
 FOR EACH ROW
 BEGIN
@@ -223,7 +223,7 @@ END;
 /
 
 /* Trigger para asignar fecha de creación al insertar una Norma */
-CREATE OR REPLACE TRIGGER TRG_norma_insert
+CREATE OR REPLACE TRIGGER TR_norma_insert
 BEFORE INSERT ON normas
 FOR EACH ROW
 BEGIN
@@ -232,7 +232,7 @@ END;
 /
 
 /* Trigger para prevenir la modificación del ID al modificar una Norma */
-CREATE OR REPLACE TRIGGER TRG_norma_update
+CREATE OR REPLACE TRIGGER TR_norma_update
 BEFORE UPDATE ON normas
 FOR EACH ROW
 BEGIN
@@ -246,21 +246,21 @@ END;
 /*XDisparadores*/
 
 -- Eliminar los triggers creados
-DROP TRIGGER TRG_ley_insert;
-DROP TRIGGER TRG_ley_update;
+DROP TRIGGER TR_ley_insert;
+DROP TRIGGER TR_ley_update;
 
-DROP TRIGGER TRG_contenido_visual_insert;
-DROP TRIGGER TRG_contenido_visual_update;
+DROP TRIGGER TR_contenido_visual_insert;
+DROP TRIGGER TR_contenido_visual_update;
 
-DROP TRIGGER TRG_responsable_legal_insert;
-DROP TRIGGER TRG_responsable_legal_update;
+DROP TRIGGER TR_responsable_legal_insert;
+DROP TRIGGER TR_responsable_legal_update;
 
-DROP TRIGGER TRG_clasificacion_insert;
-DROP TRIGGER TRG_clasificacion_update;
+DROP TRIGGER TR_clasificacion_insert;
+DROP TRIGGER TR_clasificacion_update;
 
-DROP TRIGGER TRG_perfil_insert;
-DROP TRIGGER TRG_perfil_update;
+DROP TRIGGER TR_perfil_insert;
+DROP TRIGGER TR_perfil_update;
 
-DROP TRIGGER TRG_norma_insert;
-DROP TRIGGER TRG_norma_update;
+DROP TRIGGER TR_norma_insert;
+DROP TRIGGER TR_norma_update;
 
