@@ -85,25 +85,33 @@ END;
 CREATE OR REPLACE PACKAGE PK_usuarios IS
     PROCEDURE adicionar(
         xIdUsuario IN NUMBER,
+        xIdVerificaciones IN NUMBER,
         xNombreUsuario IN VARCHAR2,
+        xFechaEdad IN DATE,
         xNivelAcceso IN VARCHAR2,
-        xCorreo IN VARCHAR2
+        xPaisOrigen IN VARCHAR2,
+        xRol IN VARCHAR2
     );
+
     PROCEDURE modificar(
         xIdUsuario IN NUMBER,
         xNombreUsuario IN VARCHAR2,
         xNivelAcceso IN VARCHAR2,
-        xCorreo IN VARCHAR2
+        xPaisOrigen IN VARCHAR2,
+        xRol IN VARCHAR2
     );
+
     PROCEDURE eliminar(
         xIdUsuario IN NUMBER
     );
+
     PROCEDURE consultar(
         xIdUsuario IN NUMBER,
         xResultado OUT SYS_REFCURSOR
     );
 END;
-/
+/ 
+
 -------------------------------------------------------------------------------------
 /*CRUDI*/
 -------------------------------------------------------------------------------------
@@ -227,59 +235,59 @@ END PK_INFANTES;
 /
 -------------------------------------------------------------------------------------
 CREATE OR REPLACE PACKAGE BODY PK_entidadesGubernamentales AS
-
-    -- Adicionar entidad
     PROCEDURE adicionar(
         xIdEntidad IN NUMBER,
         xNombre IN VARCHAR2,
         xAutoridad IN VARCHAR2
     ) IS
     BEGIN
-        INSERT INTO entidadesGubernamentales (id, nombre, autoridad)
-        VALUES (xIdEntidad, xNombre, xAutoridad);
+        INSERT INTO leyes (id, nombre, autoridadFiscal, entidades, sancion, fechaPublicacion)
+        VALUES (xIdEntidad, xNombre, xAutoridad, xNombre, 0, SYSDATE);
+        COMMIT;
     EXCEPTION
         WHEN OTHERS THEN
             ROLLBACK;
             RAISE_APPLICATION_ERROR(-20003, 'Error al adicionar entidad gubernamental');
     END adicionar;
 
-    -- Modificar entidad
     PROCEDURE modificar(
         xIdEntidad IN NUMBER,
         xNombre IN VARCHAR2,
         xAutoridad IN VARCHAR2
     ) IS
     BEGIN
-        UPDATE entidadesGubernamentales
-        SET nombre = xNombre, autoridad = xAutoridad
+        UPDATE leyes
+        SET nombre = xNombre, 
+            autoridadFiscal = xAutoridad, 
+            entidades = xNombre
         WHERE id = xIdEntidad;
+        COMMIT;
     EXCEPTION
         WHEN OTHERS THEN
             ROLLBACK;
             RAISE_APPLICATION_ERROR(-20004, 'Error al modificar entidad gubernamental');
     END modificar;
 
-    -- Eliminar entidad
     PROCEDURE eliminar(
         xIdEntidad IN NUMBER
     ) IS
     BEGIN
-        DELETE FROM entidadesGubernamentales WHERE id = xIdEntidad;
+        DELETE FROM leyes WHERE id = xIdEntidad;
+        COMMIT;
     EXCEPTION
         WHEN OTHERS THEN
             ROLLBACK;
             RAISE_APPLICATION_ERROR(-20005, 'Error al eliminar entidad gubernamental');
     END eliminar;
 
-    -- Consultar entidad
     PROCEDURE consultar(
         xIdEntidad IN NUMBER,
         xResultado OUT SYS_REFCURSOR
     ) IS
     BEGIN
         OPEN xResultado FOR
-        SELECT id, nombre, autoridad
-        FROM entidadesGubernamentales
+        SELECT id, nombre, autoridadFiscal AS autoridad
+        FROM leyes
         WHERE id = xIdEntidad;
     EXCEPTION
         WHEN OTHERS THEN
@@ -287,12 +295,24 @@ CREATE OR REPLACE PACKAGE BODY PK_entidadesGubernamentales AS
             RAISE_APPLICATION_ERROR(-20006, 'Error al consultar entidad gubernamental');
     END consultar;
 
+    FUNCTION contenidoReportado RETURN SYS_REFCURSOR IS
+        vResultado SYS_REFCURSOR;
+    BEGIN
+        OPEN vResultado FOR
+        SELECT id, nombre, autoridadFiscal AS autoridad
+        FROM leyes;
+        
+        RETURN vResultado;
+    EXCEPTION
+        WHEN OTHERS THEN
+            ROLLBACK;
+            RAISE_APPLICATION_ERROR(-20007, 'Error al obtener contenido reportado');
+    END contenidoReportado;
 END PK_entidadesGubernamentales;
 /
 -------------------------------------------------------------------------------------
 CREATE OR REPLACE PACKAGE BODY PK_maestros AS
-
-    -- Adicionar maestro
+    
     PROCEDURE adicionar(
         xIdMaestro IN NUMBER,
         xNombre IN VARCHAR2,
@@ -300,15 +320,22 @@ CREATE OR REPLACE PACKAGE BODY PK_maestros AS
         xContacto IN VARCHAR2
     ) IS
     BEGIN
-        INSERT INTO tutores (id, nombre, responsabilidad, correo, numeroTelefono, documentoIdentidad, direccion)
-        VALUES (xIdMaestro, xNombre, xEspecialidad, xContacto, 1234567890, 100000, 'Direccion ejemplo');
+        INSERT INTO tutores (
+            id, nombre, responsabilidad, correo, 
+            numeroTelefono, documentoIdentidad, direccion, 
+            idResponsablesLegales, idPerfil
+        ) VALUES (
+            xIdMaestro, xNombre, xEspecialidad, xContacto, 
+            1234567890, 100000, 'Direccion ejemplo', 
+            1, 1  
+        );
+        COMMIT;
     EXCEPTION
         WHEN OTHERS THEN
             ROLLBACK;
             RAISE_APPLICATION_ERROR(-20007, 'Error al adicionar maestro');
     END adicionar;
 
-    -- Modificar maestro
     PROCEDURE modificar(
         xIdMaestro IN NUMBER,
         xNombre IN VARCHAR2,
@@ -317,27 +344,29 @@ CREATE OR REPLACE PACKAGE BODY PK_maestros AS
     ) IS
     BEGIN
         UPDATE tutores
-        SET nombre = xNombre, responsabilidad = xEspecialidad, correo = xContacto
+        SET nombre = xNombre, 
+            responsabilidad = xEspecialidad, 
+            correo = xContacto
         WHERE id = xIdMaestro;
+        COMMIT;
     EXCEPTION
         WHEN OTHERS THEN
             ROLLBACK;
             RAISE_APPLICATION_ERROR(-20008, 'Error al modificar maestro');
     END modificar;
 
-    -- Eliminar maestro
     PROCEDURE eliminar(
         xIdMaestro IN NUMBER
     ) IS
     BEGIN
         DELETE FROM tutores WHERE id = xIdMaestro;
+        COMMIT;
     EXCEPTION
         WHEN OTHERS THEN
             ROLLBACK;
             RAISE_APPLICATION_ERROR(-20009, 'Error al eliminar maestro');
     END eliminar;
 
-    -- Consultar maestro
     PROCEDURE consultar(
         xIdMaestro IN NUMBER,
         xResultado OUT SYS_REFCURSOR
@@ -353,37 +382,76 @@ CREATE OR REPLACE PACKAGE BODY PK_maestros AS
             RAISE_APPLICATION_ERROR(-20010, 'Error al consultar maestro');
     END consultar;
 
+    FUNCTION responsablesVigentes RETURN SYS_REFCURSOR IS
+        vResultado SYS_REFCURSOR;
+    BEGIN
+        OPEN vResultado FOR
+        SELECT t.id, t.nombre, t.responsabilidad, t.correo, rl.nombre as responsableLegal
+        FROM tutores t
+        JOIN responsablesLegales rl ON t.idResponsablesLegales = rl.id;
+        
+        RETURN vResultado;
+    EXCEPTION
+        WHEN OTHERS THEN
+            ROLLBACK;
+            RAISE_APPLICATION_ERROR(-20011, 'Error al obtener responsables vigentes');
+    END responsablesVigentes;
+
+    FUNCTION contenidoInteractivo RETURN SYS_REFCURSOR IS
+        vResultado SYS_REFCURSOR;
+    BEGIN
+        OPEN vResultado FOR
+        SELECT ci.id, ci.nivelInteraccion, ci.plataformasCompatibles, 
+               ci.popularidad, ci.accesibilidad
+        FROM contenidosInteractivos ci;
+        
+        RETURN vResultado;
+    EXCEPTION
+        WHEN OTHERS THEN
+            ROLLBACK;
+            RAISE_APPLICATION_ERROR(-20012, 'Error al obtener contenido interactivo');
+    END contenidoInteractivo;
 END PK_maestros;
 /
 -------------------------------------------------------------------------------------
 CREATE OR REPLACE PACKAGE BODY PK_usuarios AS
 
-    -- Adicionar usuario
+    -- Procedimiento adicionar
     PROCEDURE adicionar(
         xIdUsuario IN NUMBER,
+        xIdVerificaciones IN NUMBER,
         xNombreUsuario IN VARCHAR2,
+        xFechaEdad IN DATE,
         xNivelAcceso IN VARCHAR2,
-        xCorreo IN VARCHAR2
+        xPaisOrigen IN VARCHAR2,
+        xRol IN VARCHAR2
     ) IS
     BEGIN
-        INSERT INTO perfiles (id, nombreUsuario, nivelAcceso, correo)
-        VALUES (xIdUsuario, xNombreUsuario, xNivelAcceso, xCorreo);
+        INSERT INTO perfiles (
+            id, idVerificaciones, nombreUsuario, fechaEdad, fechaRegistro, nivelAcceso, paisOrigen, rol
+        ) VALUES (
+            xIdUsuario, xIdVerificaciones, xNombreUsuario, xFechaEdad, SYSDATE, xNivelAcceso, xPaisOrigen, xRol
+        );
     EXCEPTION
         WHEN OTHERS THEN
             ROLLBACK;
             RAISE_APPLICATION_ERROR(-20011, 'Error al adicionar usuario');
     END adicionar;
 
-    -- Modificar usuario
+    -- Procedimiento modificar
     PROCEDURE modificar(
         xIdUsuario IN NUMBER,
         xNombreUsuario IN VARCHAR2,
         xNivelAcceso IN VARCHAR2,
-        xCorreo IN VARCHAR2
+        xPaisOrigen IN VARCHAR2,
+        xRol IN VARCHAR2
     ) IS
     BEGIN
         UPDATE perfiles
-        SET nombreUsuario = xNombreUsuario, nivelAcceso = xNivelAcceso, correo = xCorreo
+        SET nombreUsuario = xNombreUsuario,
+            nivelAcceso = xNivelAcceso,
+            paisOrigen = xPaisOrigen,
+            rol = xRol
         WHERE id = xIdUsuario;
     EXCEPTION
         WHEN OTHERS THEN
@@ -391,7 +459,7 @@ CREATE OR REPLACE PACKAGE BODY PK_usuarios AS
             RAISE_APPLICATION_ERROR(-20012, 'Error al modificar usuario');
     END modificar;
 
-    -- Eliminar usuario
+    -- Procedimiento eliminar
     PROCEDURE eliminar(
         xIdUsuario IN NUMBER
     ) IS
@@ -403,14 +471,14 @@ CREATE OR REPLACE PACKAGE BODY PK_usuarios AS
             RAISE_APPLICATION_ERROR(-20013, 'Error al eliminar usuario');
     END eliminar;
 
-    -- Consultar usuario
+    -- Procedimiento consultar
     PROCEDURE consultar(
         xIdUsuario IN NUMBER,
         xResultado OUT SYS_REFCURSOR
     ) IS
     BEGIN
         OPEN xResultado FOR
-        SELECT id, nombreUsuario, nivelAcceso, correo
+        SELECT id, idVerificaciones, nombreUsuario, fechaEdad, fechaRegistro, nivelAcceso, paisOrigen, rol
         FROM perfiles
         WHERE id = xIdUsuario;
     EXCEPTION
