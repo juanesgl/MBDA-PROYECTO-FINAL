@@ -34,7 +34,6 @@ CREATE OR REPLACE PACKAGE PK_INFANTES IS
 END;
 /
 -------------------------------------------------------------------------------------
-
 CREATE OR REPLACE PACKAGE PK_entidadesGubernamentales IS
     PROCEDURE adicionar(
         xIdEntidad IN NUMBER,
@@ -190,6 +189,9 @@ CREATE OR REPLACE PACKAGE BODY PK_padresDeFamilia IS
 
 END PK_padresDeFamilia;
 /
+
+
+
 -------------------------------------------------------------------------------------
 CREATE OR REPLACE PACKAGE BODY PK_INFANTES AS
 
@@ -242,7 +244,7 @@ CREATE OR REPLACE PACKAGE BODY PK_entidadesGubernamentales AS
     ) IS
     BEGIN
         INSERT INTO leyes (id, nombre, autoridadFiscal, entidades, sancion, fechaPublicacion)
-        VALUES (xIdEntidad, xNombre, xAutoridad, xNombre, 0, SYSDATE);
+        VALUES (xIdEntidad, xNombre, xAutoridad, xAutoridad, 0, SYSDATE);
         COMMIT;
     EXCEPTION
         WHEN OTHERS THEN
@@ -500,6 +502,31 @@ DROP PACKAGE PK_maestros;
 DROP PACKAGE PK_usuarios;
 
 /*CRUDOk */
+----------ADICIONAR----------
+
+-------------------------------------------------------------------------------------
+BEGIN 
+    PK_padresDeFamilia.adicionar(16, 'Astryyyyy', 'Padre');
+END;
+
+BEGIN 
+    PK_padresDeFamilia.adicionar(17, 'Armando Casas', 'Padre');
+END;
+
+-------------------------------------------------------------------------------------
+
+BEGIN
+    PK_entidadesGubernamentales.adicionar(16, 'Ley, Decreto 123', 'Ministerio de Educación');
+END;
+
+
+----------MODIFICAR----------
+
+
+----------ELIMINAR----------
+
+
+----------CONSULTAR----------
 
 
 /*CRUDNoOK */
