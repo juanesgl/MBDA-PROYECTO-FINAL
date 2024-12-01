@@ -503,32 +503,183 @@ DROP PACKAGE PK_usuarios;
 
 /*CRUDOk */
 ----------ADICIONAR----------
-
--------------------------------------------------------------------------------------
 BEGIN 
-    PK_padresDeFamilia.adicionar(16, 'Astryyyyy', 'Padre');
+    PK_padresDeFamilia.adicionar(16, 'Astryyyy', 'Madre;
 END;
-
-BEGIN 
-    PK_padresDeFamilia.adicionar(17, 'Armando Casas', 'Padre');
-END;
-
--------------------------------------------------------------------------------------
 
 BEGIN
-    PK_entidadesGubernamentales.adicionar(16, 'Ley, Decreto 123', 'Ministerio de Educación');
+    PK_entidadesGubernamentales.adicionar(16, 'Senado', 'Senador');
+END;
+
+BEGIN
+    PK_maestros.adicionar(16, 'Santiago Ojeda', 'Ingeniero Biomedico', '3012345478');
 END;
 
 
+BEGIN
+    PK_usuarios.adicionar(16, 100, 'Pedrito', SYSDATE, 'Alto', 'Uganda', 'Estudiante');
+END
 ----------MODIFICAR----------
+BEGIN
+    PK_padresDeFamilia.modificar(16, 'Juan', 'Padre');
+END;
 
+BEGIN
+    PK_entidadesGubernamentales.modificar(16, 'Alcaldia', 'Alcalde');
+END;
+
+BEGIN
+    PK_maestros.modificar(16, 'Johny', 'Matematico', '3246478');
+END;
+
+BEGIN
+    PK_usuarios.modificar(16, 'Walter', 'alto', 'Perú', 'Maestro');
+END;
 
 ----------ELIMINAR----------
+BEGIN
+    PK_padresDeFamilia.eliminar(16);
+END;
 
+BEGIN
+    PK_entidadesGubernamentales.eliminar(16);
+END;
+
+BEGIN
+    PK_maestros.eliminar(16);
+END;
+
+BEGIN
+    PK_usuarios.eliminar(16);
+END;
 
 ----------CONSULTAR----------
+DECLARE
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    v_cursor := PK_padresDeFamilia.consultar;
+    -- Process v_cursor
+END;
 
+DECLARE
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    v_cursor := PK_padresDeFamilia.consultar(16);
+    -- Process v_cursor
+END;
+
+DECLARE
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    PK_INFANTES.consultar(16, v_cursor);
+    -- Process v_cursor
+END;
+
+DECLARE
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    PK_entidadesGubernamentales.consultar(16, v_cursor);
+    -- Process v_cursor
+END;
+
+DECLARE
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    PK_maestros.consultar(1, v_cursor);
+    -- Process v_cursor
+END;
+
+DECLARE
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    PK_usuarios.consultar(1, v_cursor);
+    -- Process v_cursor
+END;
+
+-------R4 TRASH
+--INFANTES
+
+DECLARE
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    v_cursor := PK_INFANTES.contenidoAdecuado(10);
+    -- Process v_cursor
+END;
+
+--GUBERNAMENTAL
+
+DECLARE
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    v_cursor := PK_entidadesGubernamentales.contenidoReportado;
+    -- Process v_cursor
+END;
+
+--MAESTROS
+
+DECLARE
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    v_cursor := PK_maestros.responsablesVigentes;
+    -- Process v_cursor
+END;
+
+DECLARE
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    v_cursor := PK_maestros.contenidoInteractivo;
+    -- Process v_cursor
+END;
 
 /*CRUDNoOK */
+/*DEBERIAN FALLAR PORQUE YA SE ENCUENTRAN */
+
+BEGIN 
+    PK_padresDeFamilia.adicionar(16, 'Astryyyy', 'Madre;
+END;
+
+BEGIN
+    PK_entidadesGubernamentales.adicionar(16, 'Senado', 'Senador');
+END;
+
+BEGIN
+    PK_maestros.adicionar(16, 'Santiago Ojeda', 'Ingeniero Biomedico', '3012345478');
+END;
 
 
+BEGIN
+    PK_usuarios.adicionar(16, 100, 'Pedrito', SYSDATE, 'Alto', 'Uganda', 'Estudiante');
+END
+----------MODIFICAR----------
+BEGIN
+    PK_padresDeFamilia.modificar(16, 'Juan', 'Padre');
+END;
+
+BEGIN
+    PK_entidadesGubernamentales.modificar(16, 'Alcaldia', 'Alcalde');
+END;
+
+BEGIN
+    PK_maestros.modificar(16, 'Johny', 'Matematico', '3246478');
+END;
+
+BEGIN
+    PK_usuarios.modificar(16, 'Walter', 'alto', 'Perú', 'Maestro');
+END;
+
+----------ELIMINAR----------
+BEGIN
+    PK_padresDeFamilia.eliminar(16);
+END;
+
+BEGIN
+    PK_entidadesGubernamentales.eliminar(16);
+END;
+
+BEGIN
+    PK_maestros.eliminar(16);
+END;
+
+BEGIN
+    PK_usuarios.eliminar(16);
+END;
