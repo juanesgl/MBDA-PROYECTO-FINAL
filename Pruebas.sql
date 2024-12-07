@@ -81,3 +81,68 @@ BEGIN
     v_cursor := PK_padresDeFamilia.consultar(20);
 END;
 /
+--Prueba 2
+--Luis, un padre preocupado por el tiempo que su hija pasa jugando videojuegos, decide usar el sistema de gestión para establecer límites en el tiempo de uso y verificar su cumplimiento. En esta historia, Luis realizará varias acciones en el sistema, desde su registro inicial hasta la eliminación de su cuenta.
+--1. Luis se registra como padre en el sistema.
+BEGIN  
+    PK_padresDeFamilia.adicionar(30, 'Luis', 'Padre');  
+END;  
+/  
+--Luis verifica que su registro se ha realizado correctamente.
+DECLARE  
+    v_cursor SYS_REFCURSOR;  
+BEGIN  
+    v_cursor := PK_padresDeFamilia.consultar(30);  
+END;  
+/  
+--2. Luis consulta la información de todos los padres de familia en el sistema para conocer la comunidad.
+DECLARE  
+    v_cursor SYS_REFCURSOR;  
+BEGIN  
+    v_cursor := PK_padresDeFamilia.consultar;  
+END;  
+/  
+--3. Luis consulta su propia información en el sistema para asegurarse de que todo esté correcto.
+DECLARE  
+    v_cursor SYS_REFCURSOR;  
+BEGIN  
+    v_cursor := PK_padresDeFamilia.consultar(30);  
+END;  
+/  
+--4.  Luis decide actualizar su información personal en el sistema.
+BEGIN  
+    PK_padresDeFamilia.modificar(30, 'Luis Alberto', 'Padre');  
+END;  
+/  
+--Luis verifica que los cambios se han realizado correctamente.
+--5. Luis configura límites de tiempo de juego diario para su hija.
+BEGIN  
+    PK_INFANTES.limitarTiempoJuego(15, 2); -- Su hija tiene 15 años y puede jugar 2 horas al día.  
+END;  
+/  
+--6. Luis consulta el cumplimiento de los límites establecidos para monitorear el tiempo de juego.
+DECLARE  
+    v_cursor SYS_REFCURSOR;  
+BEGIN  
+    v_cursor := PK_INFANTES.verCumplimientoLimites(15);  
+END;  
+/  
+--7. Luis consulta los reportes de tiempo de uso para identificar si existen irregularidades.
+DECLARE  
+    v_cursor SYS_REFCURSOR;  
+BEGIN  
+    v_cursor := PK_entidadesGubernamentales.reportesTiempoUso;  
+END;  
+/  
+--8.  Tras un tiempo, Luis decide que ya no necesita estar registrado en el sistema y procede a eliminar su cuenta.
+BEGIN  
+    PK_padresDeFamilia.eliminar(30);  
+END;  
+/  
+-- Luis consulta de nuevo para asegurarse de que su registro ha sido eliminado.
+DECLARE  
+    v_cursor SYS_REFCURSOR;  
+BEGIN  
+    v_cursor := PK_padresDeFamilia.consultar(30);  
+END;  
+/  
